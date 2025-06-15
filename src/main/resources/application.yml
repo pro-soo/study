@@ -5,3 +5,7 @@ spring:
     redis:
       host: localhost
       port: 6379
+logging:
+  level:
+    root: INFO               # 전체 기본 로그 레벨
+    org.springframework.web: DEBUG   # 특정 패키지 로그 레벨 설정

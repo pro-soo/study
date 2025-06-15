@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>SockJS + STOMP 테스트</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+</head>
+<body>
+<h2>SockJS + STOMP 테스트</h2>
+<input id="messageInput" placeholder="메시지 입력" />
+<button onclick="sendMessage()">전송</button>
+
+<ul id="messages"></ul>
+
+<script>
+    const socket = new SockJS("http://localhost:8080/ws");
+    const stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, function (frame) {
+        console.log("STOMP 연결됨:", frame);
+
+        stompClient.subscribe("/topic/messages", function (msg) {
+            const messages = document.getElementById("messages");
+            const li = document.createElement("li");
+            li.textContent = msg.body;
+            messages.appendChild(li);
+        });
+    });
+
+    function sendMessage() {
+        const input = document.getElementById("messageInput");
+        if (input.value.trim() !== "") {
+            stompClient.send("/app/chat/send", { }, input.value);
+            input.value = "";
+        }
+    }
+</script>
+</body>
+</html>
